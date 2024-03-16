@@ -17,6 +17,7 @@ echo
 dbname="librenms"
 dbuser="librenms"
 apt update
+apt dist-upgrade -y
 apt install -y acl curl fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php8.2-cli php8.2-curl php8.2-fpm php8.2-gd php8.2-gmp php8.2-mbstring php8.2-mysql php8.2-snmp php8.2-xml php8.2-zip rrdtool snmp snmpd unzip python3-pymysql python3-dotenv python3-redis python3-setuptools python3-systemd python3-pip whois traceroute apt-transport-https lsb-release ca-certificates syslog-ng monitoring-plugins ruby ruby-dev libsqlite3-dev libssl-dev pkg-config cmake libssh2-1-dev libicu-dev zlib1g-dev g++ libyaml-dev
 useradd librenms -d /opt/librenms -M -r -s "$(which bash)"
 cd /opt
@@ -87,6 +88,7 @@ sed -i "s|^#APP_URL=.*|APP_URL=http://$serverip|" /opt/librenms/.env
 su - librenms -c './lnms migrate --force'
 su - librenms -c './lnms db:seed --force'
 su - librenms -c "./lnms user:add --role=admin --password='$adminpass' --email='$adminmail' $adminuser"
+su - librenms -c "./lnms device:add $serverip --v2c -c $snmp_community"
 sed -i 's/INSTALL=true/INSTALL=false/' /opt/librenms/.env
 cp /opt/librenms/config.php.default /opt/librenms/config.php
 sed -i '/\$config\['\''show_services'\''\]\s*=\s*1;/s/^#//' /opt/librenms/config.php
@@ -103,6 +105,7 @@ su - librenms -c './lnms config:set oxidized.group_support true'
 su - librenms -c './lnms config:set oxidized.default_group default'
 su - librenms -c './lnms config:set oxidized.ignore_groups "[\"badgroup\", \"nobackup\"]"'
 su - librenms -c './lnms config:set oxidized.reload_nodes true'
+su - librenms -c "./lnms config:set oxidized.ignore_types '[\"server\"]'"
 TOKEN=$(openssl rand -hex 16)
 mysql -u $dbuser -p$dbpass -D $dbname -e "INSERT INTO api_tokens (user_id, token_hash, description, disabled) VALUES (1, '$TOKEN', 'oxidized', 0);"
 OXIDIZED_CONFIG="/home/oxidized/.config/oxidized/config"
@@ -166,7 +169,6 @@ model_map:
   olt_huawei: smartax
   linux: linuxgeneric
 EOF
-su - librenms -c "./lnms device:add $serverip --v2c -c $snmp_community"
 SERVICE_FILE="/etc/systemd/system/oxidized.service"
 cat <<EOF | sudo tee $SERVICE_FILE > /dev/null
 [Unit]
