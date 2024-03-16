@@ -8,3 +8,7 @@ Adiciona o plugin Services (nagios-plugins)
 Cadastro o próprio Linux como device
 
 Instala o Oxidized, integrado ao LibreNMS, gerando o token da API
+
+TODO
+
+Integrar o SmokePing
