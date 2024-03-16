@@ -93,6 +93,7 @@ sed -i 's/INSTALL=true/INSTALL=false/' /opt/librenms/.env
 cp /opt/librenms/config.php.default /opt/librenms/config.php
 sed -i '/\$config\['\''show_services'\''\]\s*=\s*1;/s/^#//' /opt/librenms/config.php
 echo "\$config['nagios_plugins']   = \"/usr/lib/nagios/plugins\";" >> /opt/librenms/config.php
+mysql -u $dbuser -p$dbpass -D $dbname -e "INSERT INTO users_widgets (user_id, widget, col, row, size_x, size_y, title, refresh, settings, dashboard_id) VALUES (1, 'availability-map', 1, 2, 6, 3, 'Availability Map', 60, '', 1);"
 gem install oxidized
 gem install oxidized-script oxidized-web
 useradd -s /bin/bash -m oxidized
