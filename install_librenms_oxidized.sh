@@ -100,7 +100,7 @@ useradd -s /bin/bash -m oxidized
 echo "oxidized:$oxidizedpass" | sudo chpasswd
 su - oxidized -c 'oxidized'
 su - librenms -c './lnms config:set oxidized.enabled true'
-su - librenms -c "./lnms config:set oxidized.url http://$serverip:8888"
+su - librenms -c "./lnms config:set oxidized.url http://127.0.0.1:8888"
 su - librenms -c './lnms config:set oxidized.features.versioning true'
 su - librenms -c './lnms config:set oxidized.group_support true'
 su - librenms -c './lnms config:set oxidized.default_group default'
@@ -124,7 +124,7 @@ use_max_threads: false
 timeout: 20
 retries: 3
 prompt: !ruby/regexp /^([\w.@-]+[#>]\s?)$/
-rest: $serverip:8888
+rest: 127.0.0.1:8888
 next_adds_job: false
 vars: {}
 groups: {}
