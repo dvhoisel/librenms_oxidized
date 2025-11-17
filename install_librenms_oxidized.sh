@@ -1,5 +1,5 @@
 #!/bin/bash
-# by Daniel Hoisel daniel@hoisel.com.br 15/03/2024 v0.2
+# by Daniel Hoisel daniel@hoisel.com.br 15/03/2024 v0.3
 echo "Rodar esse script como root. Cuidado com o preenchimento, pois não há validação de campos."
 echo "A instalação do LibreNMS por esse script não exige interação pela web."
 echo "Configuração inicial do LibreNMS..."
@@ -18,15 +18,15 @@ dbname="librenms"
 dbuser="librenms"
 apt update
 apt dist-upgrade -y
-apt install -y acl curl fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php8.2-cli php8.2-curl php8.2-fpm php8.2-gd php8.2-gmp php8.2-mbstring php8.2-mysql php8.2-snmp php8.2-xml php8.2-zip rrdtool snmp snmpd unzip python3-pymysql python3-dotenv python3-redis python3-setuptools python3-systemd python3-pip whois traceroute apt-transport-https lsb-release ca-certificates syslog-ng monitoring-plugins ruby ruby-dev libsqlite3-dev libssl-dev pkg-config cmake libssh2-1-dev libicu-dev zlib1g-dev g++ libyaml-dev
+apt install -y acl curl fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php8.4-cli php8.4-curl php8.4-fpm php8.4-gd php8.4-gmp php8.4-mbstring php8.4-mysql php8.4-snmp php8.4-xml php8.4-zip rrdtool snmp snmpd unzip python3-pymysql python3-dotenv python3-redis python3-setuptools python3-systemd python3-pip whois traceroute apt-transport-https lsb-release ca-certificates syslog-ng monitoring-plugins ruby ruby-dev libsqlite3-dev libssl-dev pkg-config cmake libssh2-1-dev libicu-dev zlib1g-dev g++ libyaml-dev libgit2-dev
 useradd librenms -d /opt/librenms -M -r -s "$(which bash)"
 cd /opt
 git clone https://github.com/librenms/librenms.git
 chown -R librenms:librenms /opt/librenms
 chmod 771 /opt/librenms
 su - librenms -c 'cd /opt/librenms && ./scripts/composer_wrapper.php install --no-dev'
-sed -i "s|;date.timezone =.*|date.timezone = $usertimezone|" /etc/php/8.2/fpm/php.ini
-sed -i "s|;date.timezone =.*|date.timezone = $usertimezone|" /etc/php/8.2/cli/php.ini
+sed -i "s|;date.timezone =.*|date.timezone = $usertimezone|" /etc/php/8.4/fpm/php.ini
+sed -i "s|;date.timezone =.*|date.timezone = $usertimezone|" /etc/php/8.4/cli/php.ini
 timedatectl set-timezone "$usertimezone"
 sed -i '/\[mysqld\]/a innodb_file_per_table=1\nlower_case_table_names=0' /etc/mysql/mariadb.conf.d/50-server.cnf
 systemctl enable mariadb
@@ -36,12 +36,12 @@ mysql -e "CREATE DATABASE $dbname;"
 mysql -e "CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$dbpass';"
 mysql -e "GRANT ALL PRIVILEGES ON $dbname.* TO '$dbuser'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
-cp /etc/php/8.2/fpm/pool.d/www.conf /etc/php/8.2/fpm/pool.d/librenms.conf
-sed -i 's/\[www\]/\[librenms\]/' /etc/php/8.2/fpm/pool.d/librenms.conf
-sed -i 's/^user = www-data/user = librenms/' /etc/php/8.2/fpm/pool.d/librenms.conf
-sed -i 's/^group = www-data/group = librenms/' /etc/php/8.2/fpm/pool.d/librenms.conf
-sed -i 's/^listen = \/run\/php\/php8.2-fpm.sock/listen = \/run\/php-fpm-librenms.sock/' /etc/php/8.2/fpm/pool.d/librenms.conf
-systemctl restart php8.2-fpm
+cp /etc/php/8.4/fpm/pool.d/www.conf /etc/php/8.4/fpm/pool.d/librenms.conf
+sed -i 's/\[www\]/\[librenms\]/' /etc/php/8.4/fpm/pool.d/librenms.conf
+sed -i 's/^user = www-data/user = librenms/' /etc/php/8.4/fpm/pool.d/librenms.conf
+sed -i 's/^group = www-data/group = librenms/' /etc/php/8.4/fpm/pool.d/librenms.conf
+sed -i 's/^listen = \/run\/php\/php8.4-fpm.sock/listen = \/run\/php-fpm-librenms.sock/' /etc/php/8.4/fpm/pool.d/librenms.conf
+systemctl restart php8.4-fpm
 cat <<EOF > /etc/nginx/sites-enabled/librenms.vhost
 server {
  listen      80;
@@ -66,7 +66,7 @@ server {
 EOF
 rm /etc/nginx/sites-enabled/default
 systemctl reload nginx
-systemctl restart php8.2-fpm
+systemctl restart php8.4-fpm
 ln -s /opt/librenms/lnms /usr/bin/lnms
 cp /opt/librenms/misc/lnms-completion.bash /etc/bash_completion.d/
 cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
