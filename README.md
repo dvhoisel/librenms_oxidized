@@ -1,5 +1,5 @@
 # librenms_oxidized
-Script de instalação do LibreNMS integrado ao Oxidized
+Script de instalação do LibreNMS integrado ao Oxidized no Debian 13
 
 Instala o LibreNMS 100% por CLI, já criando o usuário admin
 
