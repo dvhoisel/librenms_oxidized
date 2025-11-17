@@ -18,7 +18,9 @@ dbname="librenms"
 dbuser="librenms"
 apt update
 apt dist-upgrade -y
-apt install -y acl curl fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php8.4-cli php8.4-curl php8.4-fpm php8.4-gd php8.4-gmp php8.4-mbstring php8.4-mysql php8.4-snmp php8.4-xml php8.4-zip rrdtool snmp snmpd unzip python3-pymysql python3-dotenv python3-redis python3-setuptools python3-systemd python3-pip whois traceroute apt-transport-https lsb-release ca-certificates syslog-ng monitoring-plugins ruby ruby-dev libsqlite3-dev libssl-dev pkg-config cmake libssh2-1-dev libicu-dev zlib1g-dev g++ libyaml-dev libgit2-dev
+apt install -y acl curl fping git graphviz imagemagick mariadb-client mariadb-server mtr-tiny nginx-full nmap php8.4-cli php8.4-curl php8.4-fpm php8.4-gd php8.4-gmp php8.4-mbstring php8.4-mysql php8.4-snmp php8.4-xml php8.4-zip \
+rrdtool snmp snmpd unzip python3-pymysql python3-dotenv python3-redis python3-setuptools python3-systemd python3-pip whois traceroute apt-transport-https lsb-release ca-certificates syslog-ng monitoring-plugins ruby ruby-dev \
+libsqlite3-dev libssl-dev pkg-config cmake libssh2-1-dev libicu-dev zlib1g-dev g++ libyaml-dev libgit2-dev libzstd-dev
 useradd librenms -d /opt/librenms -M -r -s "$(which bash)"
 cd /opt
 git clone https://github.com/librenms/librenms.git
